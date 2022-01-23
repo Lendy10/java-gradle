@@ -37,15 +37,16 @@ jobs:
       - name: build
         run: ./gradlew build
 
-      - name: Login docker hub
-        uses: docker/login-action@v1 
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v5
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          image: lendy10/demo-app
+          tags: v1, latest
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
+      - name: increment build version
+        uses: einaregilsson/build-number@v1
         with:
-          context: .
-          push: true
-          tags: lendy10/demo-app
+          token: ${{ secrets.GIT_ACCESS_TOKEN }}
